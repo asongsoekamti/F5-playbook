@@ -1,0 +1,34 @@
+---
+
+- hosts: x.x.x.233
+  connection: ssh
+  vars:
+    cli:
+      server: x.x.x.233
+      user: yourf5username
+      password: yourf5password
+
+  tasks:
+    - name: backup ucs cui, please wait
+      bigip_command:
+        commands:
+          - rm /var/tmp/*.qkview
+          #- mv /var/tmp/localhost.localdomain.qkview /var/tmp/$(echo $HOSTNAME | cut -d'.' -f1).qkview
+        server: "{{ item.server }}"
+        user: yourf5username
+        password: yourf5password
+        validate_certs: no
+      register: result
+      delegate_to: localhost
+      with_items:
+        - { server: 'x.x.x.8'}
+        - { server: 'x.x.x.9'}
+        - { server: 'x.x.x.233'}
+        - { server: 'x.x.x.234'}
+        - { server: 'x.x.x.8'}
+        - { server: 'x.x.x.9'}
+        - { server: 'x.x.x.8'}
+        - { server: 'x.x.x.9'}
+        - { server: 'x.x.x.9'}
+        - { server: 'x.x.x.10'}
+
