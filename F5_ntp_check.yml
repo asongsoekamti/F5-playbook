@@ -1,0 +1,40 @@
+---
+
+- hosts: x.x.x.233
+  connection: ssh
+  vars:
+    cli:
+      server: x.x.x.233
+      user: yourf5username
+      password: yourf5password
+
+  tasks:
+    - name: f5 list sys db
+      bigip_command:
+        commands: 
+#          - show sys software | grep yes
+          - list sys ntp
+        server: "{{ item.server }}"
+        user: yourf5username
+        password: yourf5password
+        validate_certs: no
+      register: result
+      delegate_to: localhost
+      with_items:
+        - { server: 'x.x.x.8'}
+        - { server: 'x.x.x.9'}
+        - { server: 'x.x.x.233'}
+        - { server: 'x.x.x.234'}
+        - { server: 'x.x.x.8'}
+        - { server: 'x.x.x.9'}
+        - { server: 'x.x.x.8'}
+        - { server: 'x.x.x.9'}
+        - { server: 'x.x.x.9'}
+        - { server: 'x.x.x.10'}
+
+    - name: result list sys db
+      debug:
+         msg: "{{ result | json_query(my_query) }}"
+      vars:
+         my_query: "results[].[item, stdout]"
+      delegate_to: localhost
